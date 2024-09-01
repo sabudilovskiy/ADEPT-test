@@ -63,6 +63,26 @@ components_manager:
             method: POST
             task_processor: main-task-processor
         
+        group-distance-handler:
+            path: /group/distance
+            method: POST
+            task_processor: main-task-processor
+
+        group-time-handler:
+            path: /group/time
+            method: GET
+            task_processor: main-task-processor
+        
+        group-type-handler:
+            path: /group/type
+            method: GET
+            task_processor: main-task-processor
+        
+        group-name-handler:
+            path: /group/name
+            method: GET
+            task_processor: main-task-processor
+        
         schema-storage:
             servers:
                 - description: stable
@@ -72,7 +92,10 @@ components_manager:
                 title: Some Server Doc
                 description: Some server
                 version: 1.0.0
+
         schema-http-distributor:
             path: /openapi
             method: GET
             task_processor: main-task-processor
+
+        schema-file-distributor: {}

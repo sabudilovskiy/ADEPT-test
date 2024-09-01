@@ -1,15 +1,15 @@
 #pragma once
 #include <api/object.hpp>
-#include <uopenapi/components/openapi_handler.hpp>
 #include <models/basic_object_repository.hpp>
+#include <uopenapi/components/openapi_handler.hpp>
 #include <userver/formats/parse/boost_uuid.hpp>
 #include <userver/formats/serialize/boost_uuid.hpp>
 
 namespace views::object_post {
-struct request{
+struct request {
   api::NewObject body;
 };
-struct ok_response{
+struct ok_response {
   api::Object body;
 };
 using response200 = uopenapi::http::response<ok_response, 200>;
@@ -23,7 +23,8 @@ struct AddObjectHandler : base {
                    const userver::components::ComponentContext &ctx);
 
   response handle(request req) const override;
+
 private:
-  models::basic_object_respository& repository_;
+  models::basic_object_respository &repository_;
 };
 } // namespace views::object_post

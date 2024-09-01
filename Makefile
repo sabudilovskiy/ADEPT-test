@@ -80,3 +80,7 @@ gen-queries:
 .PHONY: build
 build:
 	cmake --build build_debug
+
+.PHONY: tests
+tests:
+	build_debug/runtests-testsuite-service --service-logs-pretty -vv tests

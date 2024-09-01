@@ -30,8 +30,5 @@ add_executable(service service/main.cpp)
 
 target_link_libraries(service PUBLIC ${src_module})
 
-SET(USERVER_PYTHON "python3")
 include(UserverTestsuite)
-userver_testsuite_add_simple(
-        SERVICE_TARGET ${PROJECT_NAME}
-)
+userver_testsuite_add_simple()
