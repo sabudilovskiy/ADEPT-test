@@ -163,10 +163,8 @@ DistanceGrouped pg_object_respository::group_by_distance(
   for (auto &obj : objs) {
     auto dist = distance(coordinates, obj.coordinates);
     auto [it, _] = result.try_emplace(GetDistanceType(dist));
-    it->second.emplace_back(api::ObjectWithDistance{
-      .object = std::move(obj),
-      .distance = dist
-    });
+    it->second.emplace_back(
+        api::ObjectWithDistance{.object = std::move(obj), .distance = dist});
   }
   for (auto &[key, value] : result) {
     std::ranges::sort(value,

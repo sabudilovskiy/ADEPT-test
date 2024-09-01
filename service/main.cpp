@@ -9,10 +9,10 @@
 #include <userver/storages/postgres/component.hpp>
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
+#include <views/group/distance/handler.hpp>
 #include <views/group/name/handler.hpp>
 #include <views/group/time/handler.hpp>
 #include <views/group/type/handler.hpp>
-#include <views/group/distance/handler.hpp>
 #include <views/object/post/handler.hpp>
 
 #include <schema_file_distributor.hpp>

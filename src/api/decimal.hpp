@@ -4,8 +4,7 @@
 #include <userver/decimal64/decimal64.hpp>
 
 namespace api {
-using Decimal =
-    userver::decimal64::Decimal<8>;
+using Decimal = userver::decimal64::Decimal<8>;
 }
 
 namespace uopenapi::reflective {
