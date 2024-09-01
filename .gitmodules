@@ -1,0 +1,4 @@
+[submodule "uopenapi"]
+	path = uopenapi
+	url = https://github.com/sabudilovskiy/userver-openapi-extension.git
+	branch = add_basic_ci

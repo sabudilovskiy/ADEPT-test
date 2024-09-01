@@ -1,0 +1,116 @@
+name: CI
+
+'on':
+  pull_request:
+  push:
+    branches:
+      - trunk
+
+env:
+  UBSAN_OPTIONS: print_stacktrace=1
+
+jobs:
+  posix:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            type: Debug
+            title: debug clang-15
+            compiler: clang
+            version: 15
+
+          - os: ubuntu-22.04
+            type: Debug
+            title: debug clang-16
+            compiler: clang
+            version: 16
+
+          - os: ubuntu-22.04
+            type: Debug
+            title: debug clang-17
+            compiler: clang
+            version: 17
+
+          - os: ubuntu-22.04
+            type: Debug
+            title: debug gcc-11
+            compiler: gcc
+            version: 11
+
+          - os: ubuntu-22.04
+            type: Debug
+            title: debug gcc-12
+            compiler: gcc
+            version: 12
+
+    name: '${{matrix.os}}: ${{matrix.title}}'
+    runs-on: ${{matrix.os}}
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: install based dependencies
+        run: |
+          sudo apt install cmake
+          sudo apt install ninja-build
+          sudo make install-compiler compiler=${{matrix.compiler}} version=${{matrix.version}}
+      - name: add Postgres package repository
+        run: |
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/trusted.gpg.d/pgdg.asc &>/dev/null
+      - name: Fetch userver
+        continue-on-error: true
+        run: >
+          cmake 
+          -B cmake_build 
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=${{matrix.type}} 
+          -DCMAKE_C_COMPILER=$(make find-c-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})
+          -DCMAKE_CXX_COMPILER=$(make find-cxx-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})
+      - name: Install packages
+        run: |
+          sudo apt update
+          sudo apt install --allow-downgrades -y pep8 $(cat cmake_build/_deps/userver-src/scripts/docs/en/deps/${{matrix.os}}.md | tr '\n' ' ')
+      - name: run codegen
+        run: |
+          sudo make gen-queries
+      - name: Reuse ccache directory
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: '${{matrix.os}} ${{matrix.title}} ccache-dir ${{github.ref}} run-${{github.run_number}}'
+          restore-keys: |
+            ${{matrix.os}} ${{matrix.title}} ccache-dir ${{github.ref}} run-'
+            ${{matrix.os}} ${{matrix.title}} ccache-
+
+      - name: Setup ccache
+        run: |
+          ccache -M 2.0GB
+          ccache -s
+      - name: Drom cmake build folder
+        run: |
+          rm -rf cmake_build
+      - name: Configure cmake project
+        run: >
+          cmake 
+          -B cmake_build 
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=${{matrix.type}} 
+          -DCMAKE_C_COMPILER=$(make find-c-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})
+          -DCMAKE_CXX_COMPILER=$(make find-cxx-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})
+
+      - name: Build project
+        run: >
+          cmake 
+          --build cmake_build
+          --target all
+
+      - name: Run tests
+        run: | 
+          cd cmake_build
+          (test -t 1 && GTEST_COLOR=1 PYTEST_ADDOPTS="--color=yes" ctest -V) || ctest -V
