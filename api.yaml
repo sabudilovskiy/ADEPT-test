@@ -1,0 +1,272 @@
+info:
+  description: Some server
+  title: Some Server Doc
+  version: 1.0.0
+openapi: 3.0.0
+servers:
+  - description: stable
+    url: http://178.154.220.53
+paths:
+  /group/type:
+    get:
+      description: views.group.type.request
+      parameters:
+        - in: query
+          name: N
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 18446744073709551615
+      responses:
+        200:
+          $ref: "#/components/responses/views.group.type.ok_response"
+  /object:
+    post:
+      description: views.object_post.request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/api.NewObject"
+      responses:
+        200:
+          $ref: "#/components/responses/views.object_post.ok_response"
+  /group/name:
+    get:
+      description: views.group.name.request
+      responses:
+        200:
+          $ref: "#/components/responses/views.group.name.ok_response"
+  /group/distance:
+    post:
+      description: views.group.distance.request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/api.Coordinates"
+      responses:
+        200:
+          $ref: "#/components/responses/views.group.distance.ok_response"
+  /group/time:
+    get:
+      description: views.group.time.request
+      responses:
+        200:
+          $ref: "#/components/responses/views.group.time.ok_response"
+components:
+  responses:
+    views.group.type.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.type.ok_response_body"
+    views.object_post.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/api.Object"
+    views.group.name.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.name.ok_response_body"
+    views.group.distance.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.distance.ok_response_body"
+    views.group.time.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.time.ok_response_body"
+  schemas:
+    views.group.type.ok_response_body:
+      type: object
+      additionalProperties: false
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/views.group.type.Group"
+      required:
+        - groups
+    views.group.type.Group:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/api.Object"
+      required:
+        - type
+        - objects
+    api.Object:
+      type: object
+      additionalProperties: false
+      properties:
+        object_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type_name:
+          type: string
+        coordinates:
+          $ref: "#/components/schemas/api.Coordinates"
+        created_at:
+          $ref: "#/components/schemas/Datetime"
+      required:
+        - object_id
+        - name
+        - type_name
+        - coordinates
+        - created_at
+    api.Coordinates:
+      type: object
+      additionalProperties: false
+      properties:
+        x:
+          $ref: "#/components/schemas/Decimal"
+        y:
+          $ref: "#/components/schemas/Decimal"
+      required:
+        - x
+        - y
+    Decimal:
+      type: string
+      description: Decimal number like 0.52131231
+    Datetime:
+      type: string
+      format: datetime
+    api.NewObject:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        type_name:
+          type: string
+        coordinates:
+          $ref: "#/components/schemas/api.Coordinates"
+        created_at:
+          $ref: "#/components/schemas/Datetime"
+        token_idempotency:
+          type: string
+          format: uuid
+      required:
+        - name
+        - type_name
+        - coordinates
+        - created_at
+        - token_idempotency
+    views.group.name.ok_response_body:
+      type: object
+      additionalProperties: false
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/views.group.name.Group"
+      required:
+        - groups
+    views.group.name.Group:
+      type: object
+      additionalProperties: false
+      properties:
+        first_letter:
+          type: string
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/api.Object"
+      required:
+        - first_letter
+        - objects
+    views.group.distance.ok_response_body:
+      type: object
+      additionalProperties: false
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/views.group.distance.Group"
+      required:
+        - groups
+    views.group.distance.Group:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: "#/components/schemas/api.DistanceType"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/api.ObjectWithDistance"
+      required:
+        - type
+        - items
+    api.DistanceType:
+      type: string
+      enum:
+        - hundred
+        - thousand
+        - ten_thousand
+        - far
+    api.ObjectWithDistance:
+      type: object
+      additionalProperties: false
+      properties:
+        object:
+          $ref: "#/components/schemas/api.Object"
+        distance:
+          type: number
+          format: double
+      required:
+        - object
+        - distance
+    views.group.time.ok_response_body:
+      type: object
+      additionalProperties: false
+      properties:
+        frames:
+          type: array
+          items:
+            $ref: "#/components/schemas/views.group.time.TimeFrame"
+      required:
+        - frames
+    views.group.time.TimeFrame:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: "#/components/schemas/api.TimeFrameType"
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/api.Object"
+      required:
+        - type
+        - objects
+    api.TimeFrameType:
+      type: string
+      enum:
+        - later
+        - tomorrow
+        - today
+        - week
+        - month
+        - year
+        - earlier
