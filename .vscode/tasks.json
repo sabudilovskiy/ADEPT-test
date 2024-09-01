@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "start mocked service",
+            "command": "${workspaceFolder}/build_debug/runtests-testsuite-service --service-logs-pretty --service-runner-mode -vvs ${workspaceFolder}/tests",
+            "type": "shell",
+            "group": "build",
+        }
+    ]
+}
