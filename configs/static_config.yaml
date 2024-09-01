@@ -50,23 +50,23 @@ components_manager:
             throttling_enabled: false
             url_trailing_slash: strict-match
 
-        login_handler:
-            path: /login
-            method: POST
-            task_processor: main-task-processor
-        register_handler:
-            path: /register
-            method: POST
-            task_processor: main-task-processor
-        todo_db:
+        objects_db:
             dbconnection: $dbconnection
             blocking_task_processor: fs-task-processor
             dns_resolver: async
             sync-start: true
+
+        object_repository: {}
+
+        add_object_handler:
+            path: /object
+            method: POST
+            task_processor: main-task-processor
+        
         schema-storage:
             servers:
                 - description: stable
-                  url: http://51.250.86.220
+                  url: http://178.154.220.53
             load-enabled: true
             info:
                 title: Some Server Doc

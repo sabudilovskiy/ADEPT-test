@@ -66,13 +66,17 @@ find-c-compiler:
 .PHONY: format
 format:
 	python3.10 scripts/format_includes.py library boost uopenapi checks
-	find checks -name '*pp' -type f | xargs clang-format-17 -i
-	find library -name '*pp' -type f | xargs clang-format-17 -i
-	make add-eol P=tests
+	find src -name '*pp' -type f | xargs clang-format-17 -i
+	find service -name '*pp' -type f | xargs clang-format-17 -i
 	make add-eol P=src
+	make add-eol P=service
 	make add-eol P=.github
 	make add-eol-root
 
 .PHONY: gen-queries
 gen-queries:
 	@python3 scripts/generate_sql_queries.py $(GENERATE_SQL_QUERIES_FLAGS)
+
+.PHONY: build
+build:
+	cmake --build build_debug
