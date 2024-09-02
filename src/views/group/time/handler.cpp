@@ -9,7 +9,7 @@ response GroupByTimeHandler::handle(request) const {
   auto &frames = resp->body.frames;
   frames.reserve(groupped.size());
   for (auto &[key, objs] : groupped) {
-    frames.emplace_back(key, std::move(objs));
+    frames.emplace_back(TimeFrame{key, std::move(objs)});
   }
   return resp;
 }
