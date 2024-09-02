@@ -1,5 +1,9 @@
 /*cmake*/
-/src/codegen/*
 *__pycache__*
-*build_debug*
+*build*
 test.log
+_*
+container
+adept_service.tar
+release.tar
+release

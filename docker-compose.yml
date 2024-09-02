@@ -1,0 +1,30 @@
+version: "2.3"
+
+services:
+    service-pg:
+        image: postgres:12
+        environment: &db_env
+          POSTGRES_DB: objects_db
+          POSTGRES_USER: object_user
+          POSTGRES_PASSWORD: top_secret
+        ports:
+          - 18800:5432
+        volumes:
+          - ./postgresql/objects_db:/docker-entrypoint-initdb.d
+          - ./container/pg_data:/var/lib/postgresql/data
+        networks:
+          - unite_network
+
+    adept_service:
+        image: adept_service:latest
+        privileged: true
+        volumes:
+          - ./container/cores:/cores:rw
+          - ./container/configs:/configs:ro
+        depends_on:
+          - service-pg
+        network_mode: "host"
+
+networks:
+    unite_network:
+        driver: bridge

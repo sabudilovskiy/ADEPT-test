@@ -1,8 +1,6 @@
 worker-threads: 4
 worker-fs-threads: 2
-logger-level: debug
+logger-level: info
 
-is_testing: false
-
-server-port: 8080
+server-port: 80
 dbconnection: 'postgresql://object_user:top_secret@localhost:18800/objects_db'

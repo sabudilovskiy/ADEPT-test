@@ -43,6 +43,20 @@ install-compiler:
       echo "Unknown compiler" >&2; \
   	fi
 
+.PHONY: instal-compiler
+docker-install-compiler:
+	@if [ "$(compiler)" = "clang" ]; then \
+            wget https://apt.llvm.org/llvm.sh; \
+            chmod +x llvm.sh; \
+            ./llvm.sh $(version); \
+            rm llvm.sh;\
+    elif [ "$(compiler)" = "gcc" ]; then \
+      	apt install -y g++-$(version); \
+      	apt install -y gcc-$(version); \
+  	else \
+      echo "Unknown compiler" >&2; \
+  	fi
+
 .PHONY: find-cxx-compiler
 find-cxx-compiler:
 	@if [ "$(compiler)" = "clang" ]; then \
@@ -77,10 +91,55 @@ format:
 gen-queries:
 	@python3 scripts/generate_sql_queries.py $(GENERATE_SQL_QUERIES_FLAGS)
 
-.PHONY: build
-build:
+.PHONY: build-debug
+build-debug:
 	cmake --build build_debug
+
+.PHONY: build-release
+build-release:
+	cmake --build build_release
+
+.PHONY: run
+run:
+	chmod +x build_release/service
+	./build_release/service --config configs/static_config.yaml --config_vars configs/config_vars.yaml
+
+.PHONY: get_all_so
+get_all_so:
+	rm -rf _so
+	mkdir _so
+	ldd build_release/service | grep "=>" | awk '{print $$3}' | xargs -I {} cp {} _so
 
 .PHONY: tests
 tests:
 	build_debug/runtests-testsuite-service --service-logs-pretty -vv tests
+
+.PHONY: build-docker
+build-docker: build-release get_all_so
+	sudo docker build -t adept_service:latest .
+	rm -rf _so
+	sudo docker save -o adept_service.tar adept_service:latest
+
+.PHONY: release
+release: 
+	sudo rm -rf release
+	sudo mkdir release
+	sudo cp adept_service.tar release/adept_service.tar
+	sudo mkdir release/container
+	sudo mkdir release/container/configs
+	sudo mkdir release/container/cores
+	sudo mkdir release/container/pg_data
+	sudo cp configs/config_vars.docker.yaml release/container/configs/config_vars.yaml
+	sudo cp configs/static_config.yaml release/container/configs/static_config.yaml
+	sudo cp docker-compose.yml release/docker-compose.yml
+	sudo tar -cvf release.tar release/
+	sudo rm -rf release
+
+
+.PHONY: start-docker
+start-docker:
+	sudo rm -rf container/configs
+	sudo mkdir container/configs
+	sudo cp configs/config_vars.docker.yaml container/configs/config_vars.yaml
+	sudo cp configs/static_config.yaml container/configs/static_config.yaml
+	sudo docker-compose up
