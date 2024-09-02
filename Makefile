@@ -132,8 +132,10 @@ release:
 	sudo cp configs/config_vars.docker.yaml _tmp/container/configs/config_vars.yaml
 	sudo cp configs/static_config.yaml _tmp/container/configs/static_config.yaml
 	sudo cp docker-compose.yml _tmp/docker-compose.yml
-	sudo tar -cf release/container.tar _tmp/
+	sudo tar -C _tmp -cvf release/container.tar .
 	sudo rm -rf _tmp
+	sudo chmod 777 release/adept_service.tar
+	sudo chmod 777 release/container.tar
 
 
 .PHONY: start-docker

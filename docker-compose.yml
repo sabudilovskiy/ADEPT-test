@@ -19,6 +19,8 @@ services:
     adept_service:
         image: adept_service:latest
         privileged: true
+        ports: 
+          - 80:8080
         volumes:
           - ./container/cores:/cores:rw
           - ./container/configs:/configs:ro
