@@ -14,16 +14,21 @@ services:
           - ./container/pg_data:/var/lib/postgresql/data
         networks:
           - unite_network
+        restart: on-failure
 
     adept_service:
         image: adept_service:latest
         privileged: true
+        ports: 
+          - 80:8080
         volumes:
           - ./container/cores:/cores:rw
           - ./container/configs:/configs:ro
         depends_on:
           - service-pg
-        network_mode: "host"
+        networks:
+          - unite_network
+        restart: on-failure
 
 networks:
     unite_network:

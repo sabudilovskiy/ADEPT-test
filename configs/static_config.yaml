@@ -86,7 +86,7 @@ components_manager:
         schema-storage:
             servers:
                 - description: stable
-                  url: http://178.154.220.53
+                  url: http://51.250.93.166
             load-enabled: true
             info:
                 title: Some Server Doc

@@ -85,6 +85,9 @@ format:
 	make add-eol P=src
 	make add-eol P=service
 	make add-eol P=.github
+	make add-eol P=configs
+	make add-eol P=scripts
+	make add-eol P=tests
 	make add-eol-root
 
 .PHONY: gen-queries
@@ -118,22 +121,21 @@ tests:
 build-docker: build-release get_all_so
 	sudo docker build -t adept_service:latest .
 	rm -rf _so
-	sudo docker save -o adept_service.tar adept_service:latest
+	mkdir -p release
+	sudo docker save -o release/adept_service.tar adept_service:latest
 
 .PHONY: release
 release: 
-	sudo rm -rf release
-	sudo mkdir release
-	sudo cp adept_service.tar release/adept_service.tar
-	sudo mkdir release/container
-	sudo mkdir release/container/configs
-	sudo mkdir release/container/cores
-	sudo mkdir release/container/pg_data
-	sudo cp configs/config_vars.docker.yaml release/container/configs/config_vars.yaml
-	sudo cp configs/static_config.yaml release/container/configs/static_config.yaml
-	sudo cp docker-compose.yml release/docker-compose.yml
-	sudo tar -cvf release.tar release/
-	sudo rm -rf release
+	sudo mkdir -p _tmp/container/configs
+	sudo mkdir -p _tmp/container/cores
+	sudo mkdir -p _tmp/container/pg_data
+	sudo cp configs/config_vars.docker.yaml _tmp/container/configs/config_vars.yaml
+	sudo cp configs/static_config.yaml _tmp/container/configs/static_config.yaml
+	sudo cp docker-compose.yml _tmp/docker-compose.yml
+	sudo tar -C _tmp -cvf release/container.tar .
+	sudo rm -rf _tmp
+	sudo chmod 777 release/adept_service.tar
+	sudo chmod 777 release/container.tar
 
 
 .PHONY: start-docker
