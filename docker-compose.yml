@@ -14,6 +14,7 @@ services:
           - ./container/pg_data:/var/lib/postgresql/data
         networks:
           - unite_network
+        restart: on-failure
 
     adept_service:
         image: adept_service:latest
@@ -25,6 +26,7 @@ services:
           - service-pg
         networks:
           - unite_network
+        restart: on-failure
 
 networks:
     unite_network:
