@@ -7,6 +7,30 @@ servers:
   - description: stable
     url: http://51.250.93.166
 paths:
+  /group/distance:
+    post:
+      description: views.group.distance.request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/api.Coordinates"
+      responses:
+        200:
+          $ref: "#/components/responses/views.group.distance.ok_response"
+  /group/time:
+    get:
+      description: views.group.time.request
+      responses:
+        200:
+          $ref: "#/components/responses/views.group.time.ok_response"
+  /group/name:
+    get:
+      description: views.group.name.request
+      responses:
+        200:
+          $ref: "#/components/responses/views.group.name.ok_response"
   /group/type:
     get:
       description: views.group.type.request
@@ -21,30 +45,6 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/views.group.type.ok_response"
-  /group/name:
-    get:
-      description: views.group.name.request
-      responses:
-        200:
-          $ref: "#/components/responses/views.group.name.ok_response"
-  /group/time:
-    get:
-      description: views.group.time.request
-      responses:
-        200:
-          $ref: "#/components/responses/views.group.time.ok_response"
-  /group/distance:
-    post:
-      description: views.group.distance.request
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/api.Coordinates"
-      responses:
-        200:
-          $ref: "#/components/responses/views.group.distance.ok_response"
   /object:
     post:
       description: views.object_post.request
@@ -58,105 +58,7 @@ paths:
         200:
           $ref: "#/components/responses/views.object_post.ok_response"
 components:
-  responses:
-    views.group.type.ok_response:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/views.group.type.ok_response_body"
-    views.group.name.ok_response:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/views.group.name.ok_response_body"
-    views.group.time.ok_response:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/views.group.time.ok_response_body"
-    views.group.distance.ok_response:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/views.group.distance.ok_response_body"
-    views.object_post.ok_response:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/api.Object"
   schemas:
-    views.group.type.ok_response_body:
-      type: object
-      additionalProperties: false
-      properties:
-        groups:
-          type: array
-          items:
-            $ref: "#/components/schemas/views.group.type.Group"
-      required:
-        - groups
-    views.group.name.ok_response_body:
-      type: object
-      additionalProperties: false
-      properties:
-        groups:
-          type: array
-          items:
-            $ref: "#/components/schemas/views.group.name.Group"
-      required:
-        - groups
-    views.group.type.Group:
-      type: object
-      additionalProperties: false
-      properties:
-        type:
-          type: string
-        objects:
-          type: array
-          items:
-            $ref: "#/components/schemas/api.Object"
-      required:
-        - type
-        - objects
-    views.group.name.Group:
-      type: object
-      additionalProperties: false
-      properties:
-        first_letter:
-          type: string
-        objects:
-          type: array
-          items:
-            $ref: "#/components/schemas/api.Object"
-      required:
-        - first_letter
-        - objects
-    api.Object:
-      type: object
-      additionalProperties: false
-      properties:
-        object_id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        type_name:
-          type: string
-        coordinates:
-          $ref: "#/components/schemas/api.Coordinates"
-        created_at:
-          $ref: "#/components/schemas/Datetime"
-      required:
-        - object_id
-        - name
-        - type_name
-        - coordinates
-        - created_at
     api.Coordinates:
       type: object
       additionalProperties: false
@@ -171,42 +73,6 @@ components:
     Decimal:
       type: string
       description: Decimal number like 0.52131231
-    Datetime:
-      type: string
-      format: date-time
-    views.group.time.ok_response_body:
-      type: object
-      additionalProperties: false
-      properties:
-        frames:
-          type: array
-          items:
-            $ref: "#/components/schemas/views.group.time.TimeFrame"
-      required:
-        - frames
-    views.group.time.TimeFrame:
-      type: object
-      additionalProperties: false
-      properties:
-        type:
-          $ref: "#/components/schemas/api.TimeFrameType"
-        objects:
-          type: array
-          items:
-            $ref: "#/components/schemas/api.Object"
-      required:
-        - type
-        - objects
-    api.TimeFrameType:
-      type: string
-      enum:
-        - later
-        - tomorrow
-        - today
-        - week
-        - month
-        - year
-        - earlier
     views.group.distance.ok_response_body:
       type: object
       additionalProperties: false
@@ -249,6 +115,96 @@ components:
       required:
         - object
         - distance
+    api.Object:
+      type: object
+      additionalProperties: false
+      properties:
+        object_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type_name:
+          type: string
+        coordinates:
+          $ref: "#/components/schemas/api.Coordinates"
+        created_at:
+          $ref: "#/components/schemas/Datetime"
+      required:
+        - object_id
+        - name
+        - type_name
+        - coordinates
+        - created_at
+    Datetime:
+      type: string
+      format: date-time
+    views.group.time.ok_response_body:
+      type: object
+      additionalProperties: false
+      properties:
+        frames:
+          type: array
+          items:
+            $ref: "#/components/schemas/views.group.time.TimeFrame"
+      required:
+        - frames
+    views.group.time.TimeFrame:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: "#/components/schemas/api.TimeFrameType"
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/api.Object"
+      required:
+        - type
+        - objects
+    api.TimeFrameType:
+      type: string
+      enum:
+        - later
+        - tomorrow
+        - today
+        - week
+        - month
+        - year
+        - earlier
+    views.group.name.ok_response_body:
+      type: object
+      additionalProperties: false
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/views.group.name.Group"
+      required:
+        - groups
+    views.group.name.Group:
+      type: object
+      additionalProperties: false
+      properties:
+        first_letter:
+          type: string
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/api.Object"
+      required:
+        - first_letter
+        - objects
+    views.group.type.ok_response_body:
+      type: object
+      additionalProperties: false
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/views.group.type.Group"
+      required:
+        - groups
     api.NewObject:
       type: object
       additionalProperties: false
@@ -270,3 +226,47 @@ components:
         - coordinates
         - created_at
         - token_idempotency
+    views.group.type.Group:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/api.Object"
+      required:
+        - type
+        - objects
+  responses:
+    views.group.distance.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.distance.ok_response_body"
+    views.group.time.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.time.ok_response_body"
+    views.group.name.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.name.ok_response_body"
+    views.group.type.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/views.group.type.ok_response_body"
+    views.object_post.ok_response:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/api.Object"
