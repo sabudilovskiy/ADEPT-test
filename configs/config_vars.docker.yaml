@@ -3,4 +3,4 @@ worker-fs-threads: 2
 logger-level: info
 
 server-port: 80
-dbconnection: 'postgresql://object_user:top_secret@localhost:18800/objects_db'
+dbconnection: 'postgresql://object_user:top_secret@service-pg:18800/objects_db'
