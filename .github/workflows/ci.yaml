@@ -101,8 +101,8 @@ jobs:
           -B cmake_build 
           -G Ninja
           -DCMAKE_BUILD_TYPE=${{matrix.type}} 
-          -DCMAKE_C_COMPILER=ccache $(make find-c-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})
-          -DCMAKE_CXX_COMPILER=ccache $(make find-cxx-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})
+          -DCMAKE_C_COMPILER="ccache $(make find-c-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})"
+          -DCMAKE_CXX_COMPILER="ccache $(make find-cxx-compiler compiler=${{matrix.compiler}} version=${{matrix.version}})"
 
       - name: Build project
         run: >
